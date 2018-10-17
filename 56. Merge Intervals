@@ -1,0 +1,37 @@
+## Solution1
+``` java
+class Solution {
+    public List<Interval> merge(List<Interval> intervals) {
+        List<Interval> res = new LinkedList<>();
+        if (intervals == null || intervals.size() < 2) {
+            return intervals;
+        }
+        intervals.sort((l1, l2) -> Integer.compare(l1.start, l2.start));
+        Interval preInterval = intervals.get(0);
+        int rightMost = preInterval.end;
+        int preLeft = preInterval.start;
+        
+        for (int i = 1; i < intervals.size(); i++) {
+            Interval curInterval = intervals.get(i);
+            if (curInterval.start <= rightMost) {
+                rightMost = curInterval.end > rightMost ? curInterval.end : rightMost;
+            }
+            else {
+                res.add(new Interval(preLeft, rightMost));
+                preLeft = curInterval.start;
+                rightMost = curInterval.end;
+            }
+            if (i == intervals.size() - 1) {
+                res.add(new Interval(preLeft, rightMost));
+            }
+        }
+        return res;
+    }
+}
+```
+
+## note
+* First sort the intervals list in terms of interval's start time, using java's lamda expression. Then, compare each
+interval with its previous interval and merge them if the current interval's start is not greater than the rightMost
+time. Otherwise, update the rightMost to be the current interval's end. After looping, add the last interval to the list.
+* time O(nlogn) because of sorting / space O(1)
