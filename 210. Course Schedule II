@@ -1,0 +1,53 @@
+## Solution1
+``` java
+class Solution {
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+        int[] indegree = new int[numCourses];
+        int[] arrayRes = new int[numCourses];
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+        
+        for (int i = 0; i < prerequisites.length; i++) {
+            int cur = prerequisites[i][0];
+            int pre = prerequisites[i][1];
+            indegree[cur] += 1;
+            Set<Integer> set = new HashSet<>();
+            if (map.containsKey(pre)) {
+                set = map.get(pre);
+                set.add(cur);
+                map.put(pre, set);
+            }
+            if (!set.contains(cur)) {
+                set.add(cur);
+                map.put(pre, set);
+            }
+        }
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < indegree.length; i++) {
+            if (indegree[i] == 0) {
+                queue.offer(i);
+            }
+        }
+        int visited = 0;
+        while (!queue.isEmpty()) {
+            int pre = queue.poll();
+            arrayRes[visited++] = pre;
+            if (map.containsKey(pre)) {
+                for (int cur : map.get(pre)) {
+                    indegree[cur]--;
+                    if (indegree[cur] == 0) {
+                        queue.offer(cur);
+                    }
+                }
+            }
+        }
+        if (visited != numCourses) {
+            return new int[0];
+        }
+        return arrayRes;
+    }
+}
+```
+
+## note
+* dfs topological sorting
+* Remember to check if an element is present in the map before getting it.
